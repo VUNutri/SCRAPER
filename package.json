@@ -1,0 +1,33 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec babel-node -- ./src/app.js",
+    "babel-node": "babel-node --presets=env",
+    "postinstall": "cd client && npm install --dev",
+    "client": "cd client && npm start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "cheerio": "^1.0.0-rc.2",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "mongoose": "^5.3.14",
+    "puppeteer": "^1.11.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@babel/node": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "nodemon": "^1.18.7"
+  }
+}
