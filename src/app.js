@@ -6,7 +6,7 @@ const app = express();
 
 middlewares(app);
 
-app.post('/hi', scrapper);
+app.post('/getList', scrapper);
 
 const PORT = 8888;
 
