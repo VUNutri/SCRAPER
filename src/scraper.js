@@ -11,20 +11,21 @@ const getPrices = async (req, res) => {
       const $ = await cheerio.load(html.data);
       const el = await $('.b-product-price-current-number');
       const elz = await $('.b-product-title > span');
+      const img = await $('.b-link--product-info > img');
 
       let minPrice = 999999;
       let minObj;
 
       for (let i = 0; i < el.length; i++) {
-        const text = await $(elz[i]).text();
-        const price = await $(el[i]).text().replace(/\s/g, '').replace(/€/g, '').replace(/,/g, '.');
-        const resp = getParams(text, price, product);
+        const text = $(elz[i]).text();
+        const price = $(el[i]).text().replace(/\s/g, '').replace(/€/g, '').replace(/,/g, '.');
+        const imgFull = 'https://www.barbora.lt' + $(img[i]).attr('src');
+        const resp = getParams(text, price, product, imgFull);
 
-        if (resp.price < minPrice) {
+        if (resp.price < minPrice && resp.size === product.size) {
           minPrice = resp.price;
           minObj = resp;
         }
-        else console.log(resp);
       }
       resProducts.push(minObj);
     });
@@ -32,8 +33,8 @@ const getPrices = async (req, res) => {
   return res.json(resProducts);
 };
 
-const getParams = (text, price, product) => {
-  const sizes = [' kg', ' ml', ' g', ' l'];
+const getParams = (text, price, product, img) => {
+  const sizes = [' kg', ' ml', ' g', ' l', ' vnt'];
   let size;
   let idx;
   for (let i in sizes) {
@@ -57,7 +58,7 @@ const getParams = (text, price, product) => {
   }
   const vnt = Math.ceil(product.ammount / ammount);
 
-  return { description: text, ammount: vnt, price: price * vnt };
+  return { description: text, ammount: vnt, price: price * vnt, size, img };
 };
 
 export default getPrices;
