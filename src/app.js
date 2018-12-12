@@ -8,7 +8,7 @@ middlewares(app);
 
 app.post('/getList', scrapper);
 
-const PORT = 8888;
+const PORT = 8084;
 
 app.listen(PORT, (err) => {
   if (err) {
