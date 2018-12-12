@@ -44,6 +44,7 @@ const getPrices = async (req, res) => {
         .replace(/ų/g, 'u')
         .replace(/ū/g, 'u')
         .replace(/ž/g, 'z')
+        .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'%20')
         .replace(/ę/g, 'e');
       await axios.get(url.concat(ti)).then(async (html) => {
         const $ = await cheerio.load(html.data);
