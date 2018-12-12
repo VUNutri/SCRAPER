@@ -32,37 +32,41 @@ const getParams = (text, price, product, img) => {
 };
 
 const getPrices = async (req, res) => {
-  const url = 'https://www.barbora.lt/paieska?uzklausa=';
-  const { products } = req.body;
-  const resProducts = [];
+  try {
+    const url = 'https://www.barbora.lt/paieska?uzklausa=';
+    const { products } = req.body;
+    const resProducts = [];
 
-  await Promise.all(products.map(async (product) => {
-    await axios.get(url.concat(product.title)).then(async (html) => {
-      const $ = await cheerio.load(html.data);
-      const el = await $('.b-product-price-current-number');
-      const elz = await $('.b-product-title > span');
-      const img = await $('.b-link--product-info > img');
+    await Promise.all(products.map(async (product) => {
+      await axios.get(url.concat(product.title)).then(async (html) => {
+        const $ = await cheerio.load(html.data);
+        const el = await $('.b-product-price-current-number');
+        const elz = await $('.b-product-title > span');
+        const img = await $('.b-link--product-info > img');
+      
+        let minPrice = 999999;
+        let minObj;
 
-      let minPrice = 999999;
-      let minObj;
+        for (let i = 0; i < el.length; i += 1) {
+          const text = $(elz[i]).text();
+          const price = $(el[i]).text().replace(/\s/g, '')
+            .replace(/€/g, '')
+            .replace(/,/g, '.');
+          const imgFull = `https://www.barbora.lt${$(img[i]).attr('src')}`;
+          const resp = getParams(text, price, product, imgFull);
 
-      for (let i = 0; i < el.length; i += 1) {
-        const text = $(elz[i]).text();
-        const price = $(el[i]).text().replace(/\s/g, '')
-          .replace(/€/g, '')
-          .replace(/,/g, '.');
-        const imgFull = `https://www.barbora.lt${$(img[i]).attr('src')}`;
-        const resp = getParams(text, price, product, imgFull);
-
-        if (resp.price < minPrice && resp.size === product.size) {
-          minPrice = resp.price;
-          minObj = resp;
+          if (resp.price < minPrice && resp.size === product.size) {
+            minPrice = resp.price;
+            minObj = resp;
+          }
         }
-      }
-      resProducts.push(minObj);
-    });
-  }));
-  return res.json(resProducts);
+        resProducts.push(minObj);
+      });
+    }));
+    return res.json(resProducts);
+  } catch (e) {
+    return res.json({ err: 'Bad request' });
+  }
 };
 
 
