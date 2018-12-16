@@ -46,7 +46,12 @@ const getPrices = async (req, res) => {
         .replace(/ž/g, 'z')
         .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'%20')
         .replace(/ę/g, 'e');
-      await axios.get(url.concat(ti)).then(async (html) => {
+      const u = url.concat(ti);
+      await axios.get(u, {
+        headers: {
+          Referer: u,
+        },
+      }).then(async (html) => {
         const $ = await cheerio.load(html.data);
         const el = await $('.b-product-price-current-number');
         const elz = await $('.b-product-title > span');
